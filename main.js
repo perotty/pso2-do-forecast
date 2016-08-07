@@ -241,13 +241,23 @@
 
         var klass = function ($this) {
             var self = this;
-            $this.find('.forward').click(function () {self.onForward()});
-            $this.find('.backward').click(function () {self.onBackward()});
-            this._out = new TextConsole($this.find('.output'));
+            ['forward', 'backward'].forEach(function (name) {
+                var $button = $this.find('.forecast-' + name),
+                    handler = self['on' + _capitalize(name)];
+                $button.click(function () {handler.call(self)});
+                $button.focus(function () {$(this).blur()});
+            });
+            this._out = new TextConsole($this.find('.forecast-output'));
             this._base = DateUtil.trimTime(new Date());
             this._offset = 0;
             this.update();
             return this;
+        };
+
+        var _capitalize = function (s) {
+            return s.replace(/\b[a-z]/g, function (s) {
+                return s.toUpperCase();
+            });
         };
 
         klass.prototype = {
